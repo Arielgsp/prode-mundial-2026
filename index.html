@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 
 <!-- Supabase JS v2 -->
-<script src="https://cdn.jsdelivr.net/npm/@supabaseClient/supabaseClient-js@2/dist/umd/supabaseClient.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
@@ -725,9 +725,9 @@ body {
 // CONFIGURACIÓN — ¡EDITÁ ESTOS VALORES!
 // ============================================================
 const CONFIG = {
-  // PASO 1: Crear cuenta en supabaseClient.com → New Project → Settings → API
+  // PASO 1: Crear cuenta en supabase.com → New Project → Settings → API
   // Copiar Project URL y anon public key acá:
-  SUPABASE_URL:      "https://jocwxhyfvcrsjkdzsfoj.supabaseClient.co",
+  SUPABASE_URL:      "https://jocwxhyfvcrsjkdzsfoj.supabase.co",
   SUPABASE_ANON_KEY: "sb_publishable_5nLEZAQJfrjHNk4URHRc6g_zB1pszHX",
 
   // PASO 2: Deployar en Vercel y copiar la URL acá (sin slash final)
@@ -851,7 +851,7 @@ const State = {
 // ============================================================
 // SUPABASE CLIENT
 // ============================================================
-const supabaseClient = window.supabase.createClient(
+const supabaseClient = supabase.createClient(
   CONFIG.SUPABASE_URL,
   CONFIG.SUPABASE_ANON_KEY
 );
@@ -863,14 +863,14 @@ let realtimeChannel = null;
 // ============================================================
 const DB = {
   async createRoom(code, name, adminName, settings) {
-    const { data: room, error: rErr } = await supabaseClient
+    const { data: room, error: rErr } = await supabase
       .from('rooms')
       .insert({ code, name, settings, phase: 'group' })
       .select()
       .single();
     if (rErr) throw rErr;
 
-    const { data: player, error: pErr } = await supabaseClient
+    const { data: player, error: pErr } = await supabase
       .from('players')
       .insert({ room_id: room.id, name: adminName, is_admin: true })
       .select()
@@ -881,7 +881,7 @@ const DB = {
   },
 
   async joinRoom(code, playerName) {
-    const { data: room, error: rErr } = await supabaseClient
+    const { data: room, error: rErr } = await supabase
       .from('rooms')
       .select()
       .eq('code', code.toUpperCase())
@@ -889,7 +889,7 @@ const DB = {
     if (rErr || !room) throw new Error('Sala no encontrada. Verificá el código.');
 
     // Check if player with same name already exists (rejoin)
-    const { data: existing } = await supabaseClient
+    const { data: existing } = await supabase
       .from('players')
       .select()
       .eq('room_id', room.id)
@@ -898,7 +898,7 @@ const DB = {
 
     let player = existing;
     if (!player) {
-      const { data: newP, error: pErr } = await supabaseClient
+      const { data: newP, error: pErr } = await supabase
         .from('players')
         .insert({ room_id: room.id, name: playerName, is_admin: false })
         .select()
@@ -915,7 +915,7 @@ const DB = {
   },
 
   async loadPlayers(roomId) {
-    const { data } = await supabaseClient
+    const { data } = await supabase
       .from('players')
       .select()
       .eq('room_id', roomId)
@@ -924,7 +924,7 @@ const DB = {
   },
 
   async loadMyPreds(roomId, playerId) {
-    const { data } = await supabaseClient
+    const { data } = await supabase
       .from('predictions')
       .select()
       .eq('room_id', roomId)
@@ -935,7 +935,7 @@ const DB = {
   },
 
   async loadResults(roomId) {
-    const { data } = await supabaseClient
+    const { data } = await supabase
       .from('results')
       .select()
       .eq('room_id', roomId);
@@ -943,7 +943,7 @@ const DB = {
   },
 
   async loadAllPreds(roomId) {
-    const { data } = await supabaseClient
+    const { data } = await supabase
       .from('predictions')
       .select()
       .eq('room_id', roomId);
@@ -957,7 +957,7 @@ const DB = {
   },
 
   async savePrediction(roomId, playerId, matchId, value) {
-    const { error } = await supabaseClient
+    const { error } = await supabase
       .from('predictions')
       .upsert({ room_id: roomId, player_id: playerId, match_id: matchId, value, updated_at: new Date().toISOString() },
                { onConflict: 'room_id,player_id,match_id' });
@@ -965,7 +965,7 @@ const DB = {
   },
 
   async saveResult(roomId, matchId, homeScore, awayScore, source = 'manual') {
-    const { error } = await supabaseClient
+    const { error } = await supabase
       .from('results')
       .upsert({ room_id: roomId, match_id: matchId, home_score: homeScore, away_score: awayScore, api_source: source, updated_at: new Date().toISOString() },
                { onConflict: 'room_id,match_id' });
