@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prode Mundial 2026</title>
+<meta name="description" content="Jugá el prode del Mundial de Fútbol 2026. Predecí los resultados y competí con tus amigos.">
+
+<!-- ============================================================
+  GOOGLE ADSENSE
+  Reemplazá ca-pub-XXXXXXXXXXXXXXXX con tu Publisher ID
+  ============================================================ -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+
+<!-- Supabase JS v2 -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   DESIGN SYSTEM
+   ============================================================ */
+:root {
+  --bg:       #0a0f18;
+  --bg2:      #0f1822;
+  --bg3:      #141f2e;
+  --card:     #1a2336;
+  --card2:    #1e293b;
+  --border:   rgba(255,255,255,.07);
+  --border2:  rgba(255,255,255,.13);
+  --green:    #059669;
+  --green2:   #34d399;
+  --gold:     #d97706;
+  --gold2:    #fbbf24;
+  --red:      #dc2626;
+  --blue:     #3b82f6;
+  --text:     #f1f5f9;
+  --text2:    #94a3b8;
+  --text3:    #475569;
+  --radius:   10px;
+  --radius-lg:14px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Ad units ---- */
+.ad-unit {
+  background: var(--bg3);
+  border: 1px dashed var(--border2);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: 10px 14px;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ad-label {
+  font-size: 10px;
+  color: var(--text3);
+  padding: 4px 8px;
+  background: var(--bg2);
+  width: 100%;
+  text-align: center;
+}
+
+/* ---- Hero ---- */
+.hero {
+  background: linear-gradient(135deg, #064e3b 0%, #065f46 45%, #047857 100%);
+  padding: 22px 18px 16px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: '⚽';
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 52px;
+  opacity: .18;
+}
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 30px;
+  line-height: 1;
+  color: white;
+  letter-spacing: .04em;
+}
+.hero-sub { font-size: 12px; color: rgba(255,255,255,.75); margin-top: 3px; }
+.hero-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.code-pill {
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  color: white;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+.code-pill:hover { background: rgba(255,255,255,.25); }
+
+/* ---- Tab bar ---- */
+.tabbar {
+  display: flex;
+  border-bottom: 1px solid var(--border2);
+  background: var(--bg2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  overflow-x: auto;
+}
+.tabbar::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 11px 15px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 13px;
+  letter-spacing: .06em;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--text3);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all .2s;
+}
+.tab.on { color: var(--green2); border-bottom-color: var(--green2); }
+.tab:hover:not(.on) { color: var(--text2); }
+.tab.danger { color: #f87171; margin-left: auto; }
+.tab.danger:hover { color: #fca5a5; }
+
+/* ---- Group tabs ---- */
+.grouptabs {
+  display: flex;
+  gap: 5px;
+  padding: 9px 13px;
+  overflow-x: auto;
+  background: var(--bg3);
+}
+.grouptabs::-webkit-scrollbar { display: none; }
+.gtab {
+  padding: 4px 11px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  background: var(--bg2);
+  cursor: pointer;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 12px;
+  letter-spacing: .04em;
+  color: var(--text2);
+  transition: all .15s;
+  flex-shrink: 0;
+}
+.gtab.on { background: var(--green); color: white; border-color: var(--green); }
+
+/* ---- Group header ---- */
+.grp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px 4px;
+}
+.grp-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 15px;
+  letter-spacing: .04em;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+}
+.chip-green { background: rgba(52,211,153,.15); color: var(--green2); }
+.chip-amber { background: rgba(251,191,36,.15); color: var(--gold2); }
+.chip-blue  { background: rgba(59,130,246,.15); color: #93c5fd; }
+
+/* ---- Match cards ---- */
+.section { padding: 9px 13px; }
+.match-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 11px 13px;
+  margin-bottom: 8px;
+  background: var(--card);
+  transition: border-color .2s;
+}
+.match-card:hover { border-color: var(--border2); }
+.match-card.live-card { border-color: rgba(59,130,246,.4); background: rgba(59,130,246,.04); }
+.match-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.match-date, .match-venue { font-size: 10px; color: var(--text3); }
+.live-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: #93c5fd;
+  font-weight: 700;
+}
+.live-dot::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3b82f6;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+
+.teams-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.team-side {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+}
+.team-side.away { flex-direction: row-reverse; text-align: right; }
+.team-flag { font-size: 18px; line-height: 1; flex-shrink: 0; }
+.team-name { font-size: 12px; font-weight: 500; line-height: 1.25; }
+.vs-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 11px;
+  color: var(--text3);
+  flex-shrink: 0;
+  padding: 0 4px;
+}
+.result-score {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  color: var(--green2);
+  padding: 0 6px;
+  letter-spacing: .06em;
+  flex-shrink: 0;
+}
+.live-score {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  color: #93c5fd;
+  padding: 0 6px;
+  letter-spacing: .06em;
+  flex-shrink: 0;
+}
+
+/* ---- Prediction zone ---- */
+.pred-zone {
+  margin-top: 9px;
+  padding-top: 9px;
+  border-top: 1px solid var(--border);
+}
+.pred-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.pred-label {
+  font-size: 10px;
+  color: var(--text3);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.pred-result-label { font-size: 10px; color: var(--green2); font-weight: 700; letter-spacing: .04em; }
+
+/* 1x2 buttons */
+.pred-1x2 { display: flex; gap: 6px; justify-content: center; }
+.px-btn {
+  width: 46px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border2);
+  background: none;
+  cursor: pointer;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 15px;
+  color: var(--text2);
+  transition: all .15s;
+}
+.px-btn:hover:not(:disabled) { border-color: var(--green); color: var(--green); }
+.px-btn.sel-1, .px-btn.sel-2 { background: var(--green); border-color: var(--green); color: white; }
+.px-btn.sel-x { background: var(--gold); border-color: var(--gold); color: white; }
+.px-btn.ok-1, .px-btn.ok-2 { background: var(--green); border-color: var(--green); color: white; }
+.px-btn.ok-x { background: var(--gold); border-color: var(--gold); color: white; }
+.px-btn.wrong { background: rgba(220,38,38,.1); border-color: var(--red); color: #f87171; }
+.px-btn:disabled { cursor: default; }
+
+/* Exact score */
+.pred-exact { display: flex; align-items: center; justify-content: center; gap: 7px; }
+.score-inp {
+  width: 50px;
+  height: 36px;
+  text-align: center;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  background: var(--bg3);
+  color: var(--text);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+}
+.score-inp:focus { outline: none; border-color: var(--green); }
+.score-inp:disabled { opacity: .7; cursor: default; }
+.score-dash {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  color: var(--text3);
+}
+
+/* Points badges */
+.pts-row { margin-top: 5px; text-align: center; font-size: 11px; font-weight: 700; }
+.pts-exact   { color: var(--green2); }
+.pts-partial { color: var(--gold2); }
+.pts-wrong   { color: #f87171; }
+.pts-none    { color: var(--text3); }
+
+/* ---- Leaderboard ---- */
+.lb-section { padding: 13px; }
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: .04em;
+  margin-bottom: 12px;
+}
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 13px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 7px;
+  background: var(--card);
+  transition: border-color .2s;
+}
+.lb-row.me { border-color: var(--green); background: rgba(5,150,105,.07); }
+.lb-pos { font-family: 'Bebas Neue', sans-serif; font-size: 20px; width: 28px; text-align: center; }
+.lb-pos.gold   { color: var(--gold2); }
+.lb-pos.silver { color: #94a3b8; }
+.lb-pos.bronze { color: #b45309; }
+.lb-pos.other  { color: var(--text3); }
+.lb-info { flex: 1; }
+.lb-name { font-weight: 600; font-size: 13px; }
+.lb-sub  { font-size: 10px; color: var(--text3); margin-top: 1px; }
+.lb-pts  { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--green2); }
+.lb-pts span { font-size: 11px; color: var(--text3); }
+.live-indicator {
+  font-size: 10px;
+  color: #93c5fd;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+/* ---- Admin panel ---- */
+.admin-section { padding: 13px; }
+.info-box {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.55;
+  margin-bottom: 13px;
+}
+.info-box strong { color: var(--text); }
+.info-box a { color: var(--green2); text-decoration: none; }
+.info-box a:hover { text-decoration: underline; }
+
+.auto-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 20px;
+  background: linear-gradient(135deg, #059669, #0284c7);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: .06em;
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 13px;
+  transition: opacity .2s;
+}
+.auto-btn:hover { opacity: .9; }
+.auto-btn:disabled { opacity: .5; cursor: not-allowed; }
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,.35);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.fetch-log {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 10px 13px;
+  margin-bottom: 13px;
+  font-size: 11px;
+  color: var(--text2);
+  font-family: monospace;
+  white-space: pre-wrap;
+  max-height: 120px;
+  overflow-y: auto;
+  line-height: 1.5;
+}
+
+.results-preview {
+  border: 1px solid var(--green);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 13px;
+}
+.rp-header {
+  padding: 9px 13px;
+  background: rgba(5,150,105,.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+}
+.apply-all {
+  padding: 5px 13px;
+  border-radius: 7px;
+  border: none;
+  background: var(--green);
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 12px;
+}
+.apply-all:hover { background: #047857; }
+.rp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 13px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.rp-row:last-child { border-bottom: none; }
+.rp-match { color: var(--text); }
+.rp-score { font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: var(--green2); }
+.rp-ok { font-size: 10px; color: var(--green2); }
+
+.admin-match-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 13px;
+  margin-bottom: 7px;
+  background: var(--card);
+}
+.admin-match-card.done { border-color: rgba(52,211,153,.25); }
+.admin-match-teams { font-weight: 500; margin-bottom: 7px; font-size: 12px; color: var(--text); }
+.admin-match-date { font-size: 10px; color: var(--text3); }
+.admin-inputs { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.admin-score-inp {
+  width: 46px;
+  height: 32px;
+  text-align: center;
+  border: 1px solid var(--border2);
+  border-radius: 7px;
+  background: var(--bg3);
+  color: var(--text);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+}
+.admin-score-inp:focus { outline: none; border-color: var(--green); }
+.save-btn {
+  padding: 5px 13px;
+  border-radius: 7px;
+  border: none;
+  background: var(--green);
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 11px;
+  transition: background .15s;
+}
+.save-btn:hover { background: #047857; }
+.saved-badge { font-size: 10px; color: var(--green2); }
+
+/* ---- Forms / Landing / Auth ---- */
+.page { padding: 16px; }
+.back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text2);
+  font-size: 12px;
+  padding: 2px 0;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 16px;
+}
+.back-btn:hover { color: var(--text); }
+.page-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 24px;
+  letter-spacing: .04em;
+  margin-bottom: 16px;
+}
+.form-group { margin-bottom: 14px; }
+.label { font-size: 11px; color: var(--text2); margin-bottom: 4px; font-weight: 500; }
+.input {
+  width: 100%;
+  padding: 11px 13px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border2);
+  background: var(--bg3);
+  color: var(--text);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  transition: border-color .15s;
+}
+.input:focus { outline: none; border-color: var(--green); }
+.input::placeholder { color: var(--text3); }
+.error-msg { color: #f87171; font-size: 11px; margin-top: 5px; min-height: 14px; }
+
+.toggle-row { display: flex; gap: 8px; }
+.toggle-opt {
+  flex: 1;
+  padding: 10px 8px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border2);
+  background: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  color: var(--text2);
+  transition: all .15s;
+  line-height: 1.4;
+}
+.toggle-opt.on { background: var(--green); border-color: var(--green); color: white; }
+.toggle-opt:hover:not(.on) { border-color: var(--border2); color: var(--text); }
+
+.pts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+.pts-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border2);
+  background: var(--bg3);
+  color: var(--text);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  text-align: center;
+}
+.pts-input:focus { outline: none; border-color: var(--green); }
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 13px 24px;
+  border-radius: var(--radius);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 17px;
+  letter-spacing: .05em;
+  cursor: pointer;
+  border: none;
+  transition: all .2s;
+}
+.btn-primary { background: var(--green); color: white; }
+.btn-primary:hover { background: #047857; }
+.btn-secondary { background: rgba(255,255,255,.06); color: var(--text); border: 1px solid var(--border2); }
+.btn-secondary:hover { background: rgba(255,255,255,.1); }
+
+/* Code box */
+.code-box {
+  background: rgba(5,150,105,.07);
+  border: 2px solid var(--green);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-align: center;
+  margin: 14px 0;
+}
+.code-display {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  letter-spacing: .16em;
+  color: var(--green2);
+  line-height: 1;
+}
+.code-hint { font-size: 11px; color: var(--green2); margin-top: 5px; opacity: .8; }
+
+.confirm-box {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.55;
+  margin-bottom: 14px;
+}
+.confirm-box strong { color: var(--green2); }
+
+/* ---- Landing page ---- */
+.feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+.feature-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+.feature-icon { font-size: 20px; margin-bottom: 5px; }
+.feature-title { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+.feature-desc { font-size: 11px; color: var(--text2); line-height: 1.4; }
+
+/* ---- Offline / loading ---- */
+#loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: 12px;
+  color: var(--text2);
+  font-size: 14px;
+}
+.big-spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border2);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+
+/* ---- Real-time badge ---- */
+.rt-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--green2);
+  padding: 2px 8px;
+  background: rgba(52,211,153,.1);
+  border-radius: 20px;
+}
+.rt-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--green2);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ---- Bottom fixed ad ---- */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: var(--bg2);
+  border-top: 1px solid var(--border2);
+}
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<!-- Fixed bottom ad -->
+<div class="bottom-bar">
+  <!-- Google AdSense — Banner 320x50 responsive -->
+  <ins class="adsbygoogle"
+       style="display:block;min-height:50px;"
+       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+       data-ad-slot="YYYYYYYYYY"
+       data-ad-format="auto"
+       data-full-width-responsive="true">
+  </ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+
+<div style="height:60px"></div><!-- spacer for fixed bottom bar -->
+
+<script>
+// ============================================================
+// CONFIGURACIÓN — ¡EDITÁ ESTOS VALORES!
+// ============================================================
+const CONFIG = {
+  // PASO 1: Crear cuenta en supabase.com → New Project → Settings → API
+  // Copiar Project URL y anon public key acá:
+  SUPABASE_URL:      "https://XXXXXXXX.supabase.co",
+  SUPABASE_ANON_KEY: "eyJhbGc...",
+
+  // PASO 2: Deployar en Vercel y copiar la URL acá (sin slash final)
+  // Ejemplo: "https://prode-mundial.vercel.app"
+  API_BASE_URL: "",
+};
+
+// ============================================================
+// DATOS DEL FIXTURE — Grupos y partidos oficiales Mundial 2026
+// ============================================================
+const GROUPS = [
+  {id:'A',color:'#34d399',teams:[{n:'México',f:'🇲🇽'},{n:'Corea del Sur',f:'🇰🇷'},{n:'Sudáfrica',f:'🇿🇦'},{n:'Rep. Checa',f:'🇨🇿'}]},
+  {id:'B',color:'#38bdf8',teams:[{n:'Canadá',f:'🇨🇦'},{n:'Suiza',f:'🇨🇭'},{n:'Qatar',f:'🇶🇦'},{n:'Bosnia y Herz.',f:'🇧🇦'}]},
+  {id:'C',color:'#f472b6',teams:[{n:'Brasil',f:'🇧🇷'},{n:'Marruecos',f:'🇲🇦'},{n:'Escocia',f:'🏴󠁧󠁢󠁳󠁣󠁴󠁿'},{n:'Haití',f:'🇭🇹'}]},
+  {id:'D',color:'#fb923c',teams:[{n:'EE.UU.',f:'🇺🇸'},{n:'Australia',f:'🇦🇺'},{n:'Paraguay',f:'🇵🇾'},{n:'Turquía',f:'🇹🇷'}]},
+  {id:'E',color:'#a78bfa',teams:[{n:'Alemania',f:'🇩🇪'},{n:'Ecuador',f:'🇪🇨'},{n:'Costa de Marfil',f:'🇨🇮'},{n:'Curazao',f:'🇨🇼'}]},
+  {id:'F',color:'#22d3ee',teams:[{n:'Países Bajos',f:'🇳🇱'},{n:'Japón',f:'🇯🇵'},{n:'Túnez',f:'🇹🇳'},{n:'Suecia',f:'🇸🇪'}]},
+  {id:'G',color:'#fbbf24',teams:[{n:'Bélgica',f:'🇧🇪'},{n:'Irán',f:'🇮🇷'},{n:'Egipto',f:'🇪🇬'},{n:'Nueva Zelanda',f:'🇳🇿'}]},
+  {id:'H',color:'#f87171',teams:[{n:'España',f:'🇪🇸'},{n:'Uruguay',f:'🇺🇾'},{n:'Cabo Verde',f:'🇨🇻'},{n:'Arabia Saudita',f:'🇸🇦'}]},
+  {id:'I',color:'#86efac',teams:[{n:'Francia',f:'🇫🇷'},{n:'Senegal',f:'🇸🇳'},{n:'Noruega',f:'🇳🇴'},{n:'Iraq',f:'🇮🇶'}]},
+  {id:'J',color:'#c084fc',teams:[{n:'Argentina',f:'🇦🇷'},{n:'Argelia',f:'🇩🇿'},{n:'Austria',f:'🇦🇹'},{n:'Jordania',f:'🇯🇴'}]},
+  {id:'K',color:'#2dd4bf',teams:[{n:'Portugal',f:'🇵🇹'},{n:'Colombia',f:'🇨🇴'},{n:'Uzbekistán',f:'🇺🇿'},{n:'RD Congo',f:'🇨🇩'}]},
+  {id:'L',color:'#fdba74',teams:[{n:'Inglaterra',f:'🏴󠁧󠁢󠁥󠁮󠁧󠁿'},{n:'Croacia',f:'🇭🇷'},{n:'Panamá',f:'🇵🇦'},{n:'Ghana',f:'🇬🇭'}]},
+];
+const SCHEDULE = {
+  A:[[0,2,'2026-06-11T18:00','Cd. de México'],[1,3,'2026-06-11T21:00','Guadalajara'],[3,2,'2026-06-17T15:00','Atlanta'],[0,1,'2026-06-17T21:00','Guadalajara'],[3,0,'2026-06-23T21:00','Cd. de México'],[2,1,'2026-06-23T18:00','Monterrey']],
+  B:[[0,3,'2026-06-12T19:00','Toronto'],[2,1,'2026-06-12T22:00','San Francisco'],[1,3,'2026-06-18T18:00','Los Ángeles'],[0,2,'2026-06-18T21:00','Vancouver'],[1,0,'2026-06-24T18:00','Vancouver'],[3,2,'2026-06-24T21:00','Seattle']],
+  C:[[0,1,'2026-06-13T19:00','Nueva York'],[3,2,'2026-06-13T22:00','Boston'],[2,1,'2026-06-19T15:00','Boston'],[0,3,'2026-06-19T21:00','Filadelfia'],[2,0,'2026-06-25T18:00','Miami'],[1,3,'2026-06-25T21:00','Atlanta']],
+  D:[[0,2,'2026-06-12T15:00','Los Ángeles'],[1,3,'2026-06-13T15:00','Vancouver'],[3,2,'2026-06-19T18:00','San Francisco'],[0,1,'2026-06-19T22:00','Seattle'],[3,0,'2026-06-25T15:00','Los Ángeles'],[2,1,'2026-06-25T19:00','San Francisco']],
+  E:[[0,3,'2026-06-14T16:00','Houston'],[2,1,'2026-06-14T19:00','Filadelfia'],[0,2,'2026-06-20T15:00','Toronto'],[1,3,'2026-06-20T19:00','Kansas City'],[1,0,'2026-06-25T22:00','Nueva York'],[3,2,'2026-06-25T16:00','Filadelfia']],
+  F:[[0,1,'2026-06-14T19:00','Dallas'],[3,2,'2026-06-14T22:00','Monterrey'],[0,3,'2026-06-20T22:00','Houston'],[2,1,'2026-06-20T19:00','Monterrey'],[1,3,'2026-06-25T22:00','Dallas'],[2,0,'2026-06-25T19:00','Kansas City']],
+  G:[[1,3,'2026-06-15T15:00','Los Ángeles'],[0,2,'2026-06-15T18:00','Seattle'],[0,1,'2026-06-21T19:00','Los Ángeles'],[3,2,'2026-06-21T22:00','Vancouver'],[2,1,'2026-06-26T22:00','Seattle'],[3,0,'2026-06-26T19:00','Vancouver']],
+  H:[[0,2,'2026-06-15T18:00','Atlanta'],[3,1,'2026-06-15T21:00','Miami'],[0,3,'2026-06-21T15:00','Atlanta'],[1,2,'2026-06-21T18:00','Miami'],[2,3,'2026-06-26T16:00','Houston'],[1,0,'2026-06-26T19:00','Guadalajara']],
+  I:[[0,1,'2026-06-16T19:00','Nueva York'],[3,2,'2026-06-16T22:00','Boston'],[0,3,'2026-06-22T15:00','Filadelfia'],[2,1,'2026-06-22T19:00','Nueva York'],[2,0,'2026-06-26T19:00','Boston'],[1,3,'2026-06-26T22:00','Toronto']],
+  J:[[0,1,'2026-06-16T22:00','Kansas City'],[2,3,'2026-06-17T15:00','San Francisco'],[0,2,'2026-06-22T22:00','Dallas'],[3,1,'2026-06-23T15:00','San Francisco'],[1,2,'2026-06-27T19:00','Kansas City'],[3,0,'2026-06-27T22:00','Dallas']],
+  K:[[0,3,'2026-06-17T19:00','Houston'],[2,1,'2026-06-17T22:00','Cd. de México'],[0,2,'2026-06-23T19:00','Houston'],[3,1,'2026-06-23T22:00','Guadalajara'],[1,0,'2026-06-27T15:00','Miami'],[3,2,'2026-06-27T18:00','Atlanta']],
+  L:[[0,1,'2026-06-17T15:00','Dallas'],[3,2,'2026-06-18T15:00','Toronto'],[0,3,'2026-06-23T15:00','Boston'],[2,1,'2026-06-24T15:00','Toronto'],[2,0,'2026-06-27T22:00','Nueva York'],[1,3,'2026-06-27T16:00','Filadelfia']],
+};
+
+// Construir array de partidos
+const MATCHES = [];
+let matchNum = 1;
+for (const g of GROUPS) {
+  for (const [hi, ai, date, venue] of SCHEDULE[g.id]) {
+    MATCHES.push({
+      id: `G${matchNum++}`,
+      group: g.id, groupColor: g.color,
+      home: g.teams[hi].n, homeFlag: g.teams[hi].f,
+      away: g.teams[ai].n, awayFlag: g.teams[ai].f,
+      date, venue,
+    });
+  }
+}
+
+// ============================================================
+// SCORING ENGINE
+// ============================================================
+function sign(h, a) { return h > a ? '1' : h < a ? '2' : 'x'; }
+
+function calcPoints(pred, result, settings) {
+  if (!result || result.home_score === null) return { pts: 0, status: 'pending' };
+  if (!pred) return { pts: 0, status: 'no_pred' };
+
+  const rs = sign(result.home_score, result.away_score);
+
+  if (settings.type === 'exact') {
+    const ph = typeof pred === 'object' ? parseInt(pred.h) : NaN;
+    const pa = typeof pred === 'object' ? parseInt(pred.a) : NaN;
+    if (isNaN(ph) || isNaN(pa)) return { pts: 0, status: 'no_pred' };
+    if (ph === result.home_score && pa === result.away_score)
+      return { pts: settings.pE || 5, status: 'exact' };
+    if (sign(ph, pa) === rs)
+      return { pts: settings.pP || 2, status: 'partial' };
+    return { pts: 0, status: 'wrong' };
+  } else {
+    if (!['1','x','2'].includes(pred)) return { pts: 0, status: 'no_pred' };
+    if (pred === rs) return { pts: rs === 'x' ? (settings.pD||1) : (settings.pW||3), status: 'correct' };
+    return { pts: 0, status: 'wrong' };
+  }
+}
+
+function totalPoints(playerPreds, results, settings) {
+  let total = 0;
+  for (const r of results) {
+    const pred = playerPreds[r.match_id];
+    const { pts } = calcPoints(pred, r, settings);
+    total += pts;
+  }
+  return total;
+}
+
+// ============================================================
+// APP STATE
+// ============================================================
+const State = {
+  screen: 'loading',    // loading | landing | create | join | game
+  session: null,        // { roomId, roomCode, playerId, playerName, isAdmin }
+  room: null,           // room record from DB
+  players: [],          // all players in room
+  myPreds: {},          // { matchId: pred }
+  results: [],          // array of result records
+  liveResults: {},      // { matchId: { home, away } } — from API, not yet official
+  settings: null,
+  // UI state
+  tab: 'fixture',       // fixture | scores | admin
+  group: 'A',
+  // Create flow
+  createStep: 1,
+  createData: {},
+  createError: '',
+  // Join flow
+  joinCode: '',
+  joinName: '',
+  joinError: '',
+  // Admin
+  fetchLog: '',
+  fetchedResults: null,
+  fetching: false,
+};
+
+// ============================================================
+// SUPABASE CLIENT
+// ============================================================
+const supabase = window.supabase.createClient(
+  CONFIG.SUPABASE_URL,
+  CONFIG.SUPABASE_ANON_KEY
+);
+
+let realtimeChannel = null;
+
+// ============================================================
+// DATA LAYER
+// ============================================================
+const DB = {
+  async createRoom(code, name, adminName, settings) {
+    const { data: room, error: rErr } = await supabase
+      .from('rooms')
+      .insert({ code, name, settings, phase: 'group' })
+      .select()
+      .single();
+    if (rErr) throw rErr;
+
+    const { data: player, error: pErr } = await supabase
+      .from('players')
+      .insert({ room_id: room.id, name: adminName, is_admin: true })
+      .select()
+      .single();
+    if (pErr) throw pErr;
+
+    return { room, player };
+  },
+
+  async joinRoom(code, playerName) {
+    const { data: room, error: rErr } = await supabase
+      .from('rooms')
+      .select()
+      .eq('code', code.toUpperCase())
+      .single();
+    if (rErr || !room) throw new Error('Sala no encontrada. Verificá el código.');
+
+    // Check if player with same name already exists (rejoin)
+    const { data: existing } = await supabase
+      .from('players')
+      .select()
+      .eq('room_id', room.id)
+      .ilike('name', playerName)
+      .maybeSingle();
+
+    let player = existing;
+    if (!player) {
+      const { data: newP, error: pErr } = await supabase
+        .from('players')
+        .insert({ room_id: room.id, name: playerName, is_admin: false })
+        .select()
+        .single();
+      if (pErr) throw pErr;
+      player = newP;
+    }
+    return { room, player };
+  },
+
+  async loadRoom(roomId) {
+    const { data: room } = await supabase.from('rooms').select().eq('id', roomId).single();
+    return room;
+  },
+
+  async loadPlayers(roomId) {
+    const { data } = await supabase
+      .from('players')
+      .select()
+      .eq('room_id', roomId)
+      .order('created_at');
+    return data || [];
+  },
+
+  async loadMyPreds(roomId, playerId) {
+    const { data } = await supabase
+      .from('predictions')
+      .select()
+      .eq('room_id', roomId)
+      .eq('player_id', playerId);
+    const map = {};
+    for (const p of (data || [])) map[p.match_id] = p.value;
+    return map;
+  },
+
+  async loadResults(roomId) {
+    const { data } = await supabase
+      .from('results')
+      .select()
+      .eq('room_id', roomId);
+    return data || [];
+  },
+
+  async loadAllPreds(roomId) {
+    const { data } = await supabase
+      .from('predictions')
+      .select()
+      .eq('room_id', roomId);
+    // Group by player_id
+    const byPlayer = {};
+    for (const p of (data || [])) {
+      if (!byPlayer[p.player_id]) byPlayer[p.player_id] = {};
+      byPlayer[p.player_id][p.match_id] = p.value;
+    }
+    return byPlayer;
+  },
+
+  async savePrediction(roomId, playerId, matchId, value) {
+    const { error } = await supabase
+      .from('predictions')
+      .upsert({ room_id: roomId, player_id: playerId, match_id: matchId, value, updated_at: new Date().toISOString() },
+               { onConflict: 'room_id,player_id,match_id' });
+    if (error) throw error;
+  },
+
+  async saveResult(roomId, matchId, homeScore, awayScore, source = 'manual') {
+    const { error } = await supabase
+      .from('results')
+      .upsert({ room_id: roomId, match_id: matchId, home_score: homeScore, away_score: awayScore, api_source: source, updated_at: new Date().toISOString() },
+               { onConflict: 'room_id,match_id' });
+    if (error) throw error;
+  },
+};
+
+// ============================================================
+// LOCAL STORAGE SESSION
+// ============================================================
+const SESSION_KEY = 'prode2026_session';
+function saveSession(sess) { localStorage.setItem(SESSION_KEY, JSON.stringify(sess)); }
+function loadSession() { try { return JSON.parse(localStorage.getItem(SESSION_KEY)); } catch { return null; } }
+function clearSession() { localStorage.removeItem(SESSION_KEY); }
+
+// ============================================================
+// REAL-TIME SUBSCRIPTIONS
+// ============================================================
+function subscribeToRoom(roomId) {
+  if (realtimeChannel) supabase.removeChannel(realtimeChannel);
+
+  realtimeChannel = supabase.channel(`room:${roomId}`)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'results', filter: `room_id=eq.${roomId}` },
+      async () => {
+        State.results = await DB.loadResults(roomId);
+        render();
+      })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'players', filter: `room_id=eq.${roomId}` },
+      async () => {
+        State.players = await DB.loadPlayers(roomId);
+        if (State.tab === 'scores') render();
+      })
+    .subscribe();
+}
+
+// ============================================================
+// NAVIGATION & DATA LOADING
+// ============================================================
+async function goToGame(room, player) {
+  const session = {
+    roomId: room.id,
+    roomCode: room.code,
+    playerId: player.id,
+    playerName: player.name,
+    isAdmin: player.is_admin,
+  };
+  saveSession(session);
+  State.session = session;
+  State.room = room;
+  State.settings = room.settings;
+
+  // Load initial data in parallel
+  const [players, myPreds, results] = await Promise.all([
+    DB.loadPlayers(room.id),
+    DB.loadMyPreds(room.id, player.id),
+    DB.loadResults(room.id),
+  ]);
+  State.players = players;
+  State.myPreds = myPreds;
+  State.results = results;
+  State.tab = 'fixture';
+  State.group = 'A';
+
+  subscribeToRoom(room.id);
+  State.screen = 'game';
+  render();
+}
+
+// ============================================================
+// API-FOOTBALL INTEGRATION
+// ============================================================
+async function fetchAndSyncResults() {
+  // Solo el admin puede sincronizar
+  if (!State.session?.isAdmin) {
+    alert('Solo el administrador puede sincronizar resultados.');
+    return;
+  }
+  // Evitar clicks repetidos (cooldown de 2 minutos)
+  const cacheKey = 'last_sync_' + State.session.roomId;
+  const lastSync = localStorage.getItem(cacheKey);
+  if (lastSync && Date.now() - parseInt(lastSync) < 2 * 60 * 1000) {
+    const secs = Math.ceil((2 * 60 * 1000 - (Date.now() - parseInt(lastSync))) / 1000);
+    alert('Esperá ' + secs + ' segundos entre sincronizaciones.');
+    return;
+  }
+  State.fetching = true;
+  State.fetchLog = '⚡ Conectando con API-Football...\n';
+  State.fetchedResults = null;
+  render();
+
+  try {
+    const url = `${CONFIG.API_BASE_URL}/api/results`;
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+
+    State.fetchLog += `✅ Respuesta recibida\n`;
+    State.fetchLog += `📊 ${data.results?.length || 0} partido(s) finalizados\n`;
+    State.fetchLog += `⚽ ${data.live?.length || 0} en curso\n`;
+    if (data.cached) State.fetchLog += `📦 Desde caché (actualiza en <60s)\n`;
+    State.fetchLog += `🕐 ${data.updated_at || ''}\n`;
+
+    // Store live scores for display (not for scoring)
+    State.liveResults = {};
+    for (const l of (data.live || [])) {
+      State.liveResults[l.id] = l;
+    }
+
+    State.fetchedResults = data.results || [];
+    State.fetching = false;
+    render();
+  } catch (err) {
+    State.fetchLog += `❌ Error: ${err.message}\n`;
+    State.fetchLog += `💡 Asegurate de haber configurado API_FOOTBALL_KEY en Vercel y que la URL de la app esté en CONFIG.API_BASE_URL\n`;
+    State.fetching = false;
+    render();
+  }
+}
+
+async function applyFetchedResults() {
+  if (!State.fetchedResults?.length) return;
+  localStorage.setItem('last_sync_' + State.session.roomId, Date.now());
+  let count = 0;
+  for (const r of State.fetchedResults) {
+    await DB.saveResult(State.session.roomId, r.id, r.home, r.away, 'api-football');
+    count++;
+  }
+  State.results = await DB.loadResults(State.session.roomId);
+  State.fetchedResults = null;
+  State.fetchLog = `✅ ${count} resultado(s) guardados. La tabla de posiciones se actualizó.`;
+  render();
+}
+
+// ============================================================
+// RENDER ENGINE
+// ============================================================
+function render() {
+  const root = document.getElementById('root');
+  if (!root) return;
+
+  switch (State.screen) {
+    case 'loading': root.innerHTML = renderLoading(); break;
+    case 'landing': root.innerHTML = renderLanding(); break;
+    case 'create':  root.innerHTML = renderCreate(); break;
+    case 'join':    root.innerHTML = renderJoin(); break;
+    case 'game':    root.innerHTML = renderGame(); break;
+  }
+  bindEvents();
+}
+
+// ---- Loading ----
+function renderLoading() {
+  return `<div id="loading-screen">
+    <div class="big-spinner"></div>
+    <span>Cargando...</span>
+  </div>`;
+}
+
+// ---- Landing ----
+function renderLanding() {
+  return `
+  <div class="hero">
+    <div class="hero-row">
+      <div>
+        <h1>PRODE<br>MUNDIAL 2026</h1>
+        <div class="hero-sub">🏆 48 equipos · 12 grupos · 72 partidos · resultados en tiempo real</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ad unit — top of page -->
+  <div class="ad-unit" style="margin-top:12px">
+    <ins class="adsbygoogle" style="display:block;" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+         data-ad-slot="ZZZZZZZZZZ" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+
+  <div class="page" style="padding-top:10px">
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔑</div>
+        <div class="feature-title">Salas privadas</div>
+        <div class="feature-desc">Código de 6 letras para invitar a tus amigos</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Resultados automáticos</div>
+        <div class="feature-desc">API-Football actualiza los scores automáticamente</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-title">1-X-2 o exacto</div>
+        <div class="feature-desc">Elegís el modo y los puntos de cada sala</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏆</div>
+        <div class="feature-title">Tabla en tiempo real</div>
+        <div class="feature-desc">Los puntajes se actualizan al instante vía Supabase</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn btn-primary" id="btn-create">⚽ CREAR SALA NUEVA</button>
+      <button class="btn btn-secondary" id="btn-join">🔑 UNIRSE CON CÓDIGO</button>
+    </div>
+  </div>`;
+}
+
+// ---- Create room ----
+function renderCreate() {
+  const { createStep: step, createData: d } = State;
+  let content = '';
+
+  if (step === 1) {
+    content = `
+    <div class="page-title">NUEVA SALA</div>
+    <div class="form-group">
+      <div class="label">Nombre de la sala</div>
+      <input class="input" id="cr-name" placeholder="Ej: Prode de la oficina" value="${d.name || ''}">
+    </div>
+    <div class="form-group">
+      <div class="label">Tu nombre (serás el Admin)</div>
+      <input class="input" id="cr-admin" placeholder="Tu nombre" value="${d.adminName || ''}">
+    </div>
+    <div class="error-msg">${State.createError}</div>
+    <button class="btn btn-primary" id="cr-next1" style="margin-top:4px">SIGUIENTE →</button>`;
+  }
+
+  else if (step === 2) {
+    content = `
+    <div class="page-title">CONFIGURACIÓN</div>
+    <div class="form-group">
+      <div class="label" style="margin-bottom:8px">¿Cómo se predice?</div>
+      <div class="toggle-row">
+        <button class="toggle-opt ${(d.type || 'ox') === 'ox' ? 'on' : ''}" id="type-1x2">
+          1 - X - 2<br><small style="font-size:10px;opacity:.8">Gana / Empata / Pierde</small>
+        </button>
+        <button class="toggle-opt ${d.type === 'ex' ? 'on' : ''}" id="type-exact">
+          Resultado Exacto<br><small style="font-size:10px;opacity:.8">Goles del partido</small>
+        </button>
+      </div>
+    </div>
+    <div class="label" style="margin-bottom:6px">Puntos</div>
+    <div class="pts-grid">
+      <div>
+        <div class="label">Acierto (1 o 2)</div>
+        <input class="pts-input" id="cr-pwin" value="${d.pW || 3}">
+      </div>
+      <div>
+        <div class="label">Empate (X)</div>
+        <input class="pts-input" id="cr-pdraw" value="${d.pD || 1}">
+      </div>
+      ${d.type === 'ex' ? `
+      <div>
+        <div class="label">Resultado exacto</div>
+        <input class="pts-input" id="cr-pexact" value="${d.pE || 5}">
+      </div>
+      <div>
+        <div class="label">Signo correcto</div>
+        <input class="pts-input" id="cr-ppartial" value="${d.pP || 2}">
+      </div>` : ''}
+    </div>
+    <button class="btn btn-primary" id="cr-next2" style="margin-top:14px">CREAR SALA →</button>`;
+  }
+
+  else if (step === 3) {
+    content = `
+    <div class="page-title">¡SALA CREADA! 🎉</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:4px">Compartí este código para que se unan:</p>
+    <div class="code-box">
+      <div class="code-display">${d.code}</div>
+      <div class="code-hint">Compartilo por WhatsApp · Telegram · Email</div>
+    </div>
+    <div class="confirm-box">
+      <strong>Sala:</strong> ${d.name}<br>
+      <strong>Tipo:</strong> ${d.type === 'ex' ? 'Resultado exacto' : '1 - X - 2'} &nbsp;|&nbsp;
+      <strong>Pts acierto:</strong> ${d.pW || 3} &nbsp;|&nbsp; <strong>Empate:</strong> ${d.pD || 1}
+      ${d.type === 'ex' ? `&nbsp;|&nbsp; <strong>Exacto:</strong> ${d.pE || 5}` : ''}
+    </div>
+    <button class="btn btn-primary" id="cr-enter">ENTRAR A LA SALA →</button>`;
+  }
+
+  return `<div class="page"><button class="back-btn" id="cr-back">← Volver</button>${content}</div>`;
+}
+
+// ---- Join room ----
+function renderJoin() {
+  return `<div class="page">
+    <button class="back-btn" id="j-back">← Volver</button>
+    <div class="page-title">UNIRSE A SALA</div>
+    <div class="form-group">
+      <div class="label">Código de sala</div>
+      <input class="input" id="j-code" placeholder="XXXXXX" value="${State.joinCode}"
+             style="text-transform:uppercase;font-family:'Bebas Neue';font-size:28px;letter-spacing:.14em;text-align:center">
+    </div>
+    <div class="form-group">
+      <div class="label">Tu nombre de jugador</div>
+      <input class="input" id="j-name" placeholder="Ej: Gonzalo" value="${State.joinName}">
+    </div>
+    <div class="error-msg">${State.joinError}</div>
+    <button class="btn btn-primary" id="j-enter" style="margin-top:4px">ENTRAR →</button>
+  </div>`;
+}
+
+// ---- Game ----
+function renderGame() {
+  const { session: ses, tab, group } = State;
+  if (!ses) return '';
+
+  const myPredCount = Object.keys(State.myPreds).length;
+  const doneResults = State.results.length;
+  const liveCount = Object.keys(State.liveResults).length;
+
+  let tabContent = '';
+  if (tab === 'fixture') tabContent = renderFixture();
+  else if (tab === 'scores') tabContent = renderLeaderboard();
+  else if (tab === 'admin' && ses.isAdmin) tabContent = renderAdmin();
+
+  return `
+  <div class="hero" style="padding:14px 16px 12px">
+    <div class="hero-row">
+      <div style="flex:1;min-width:0">
+        <h1 style="font-size:22px;color:white;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${State.room?.name || 'Sala'}</h1>
+        <div class="hero-sub">
+          ⚽ ${State.players.length} jugador${State.players.length !== 1 ? 'es' : ''}
+          · ${myPredCount}/${MATCHES.length} predicciones tuyas
+          ${liveCount > 0 ? `· <span class="live-dot" style="color:rgba(255,255,255,.9)">${liveCount} en vivo</span>` : ''}
+        </div>
+      </div>
+      <div class="code-pill" id="copy-code">
+        <span style="font-family:'Bebas Neue';font-size:17px;letter-spacing:.09em">${ses.roomCode}</span>
+        <span>📋</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabbar">
+    <button class="tab ${tab === 'fixture' ? 'on' : ''}" id="tab-fixture">⚽ FIXTURE</button>
+    <button class="tab ${tab === 'scores' ? 'on' : ''}" id="tab-scores">🏆 TABLA</button>
+    ${ses.isAdmin ? `<button class="tab ${tab === 'admin' ? 'on' : ''}" id="tab-admin">⚙️ ADMIN</button>` : ''}
+    <button class="tab danger" id="btn-leave">Salir</button>
+  </div>
+
+  ${tabContent}`;
+}
+
+// ---- Fixture tab ----
+function renderFixture() {
+  const grp = GROUPS.find(g => g.id === State.group);
+  const matches = MATCHES.filter(m => m.group === State.group);
+  const doneInGroup = matches.filter(m => State.results.find(r => r.match_id === m.id)).length;
+  const liveInGroup = matches.filter(m => State.liveResults[m.id]).length;
+
+  const groupTabs = GROUPS.map(g => `
+    <button class="gtab ${g.id === State.group ? 'on' : ''}" data-grp="${g.id}"
+            style="${g.id === State.group ? `background:${g.color};border-color:${g.color};color:#000` : ''}">
+      G${g.id}
+    </button>`).join('');
+
+  const matchCards = matches.map(m => renderMatchCard(m)).join('');
+
+  return `
+  <div class="grouptabs">${groupTabs}</div>
+  <div class="grp-header">
+    <span class="grp-title" style="color:${grp.color}">GRUPO ${State.group} · ${grp.teams.map(t => t.n).join(' · ')}</span>
+    ${liveInGroup > 0
+      ? `<span class="chip chip-blue"><span class="live-dot" style="margin-right:2px"></span>${liveInGroup} en vivo</span>`
+      : doneInGroup > 0
+        ? `<span class="chip chip-green">✓ ${doneInGroup}/6</span>`
+        : `<span class="chip chip-amber">Pendiente</span>`}
+  </div>
+
+  <!-- Inline ad between group header and matches -->
+  <div class="ad-unit">
+    <ins class="adsbygoogle" style="display:block;min-height:50px;"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="AAAAAAAAAA"
+         data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+
+  <div class="section">${matchCards}</div>`;
+}
+
+function formatDate(dateStr) {
+  if (!dateStr || !dateStr.includes('T')) return dateStr;
+  try {
+    const d = new Date(dateStr);
+    const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    const day = d.getDate();
+    const month = months[d.getMonth()];
+    const hours = String(d.getHours()).padStart(2,'0');
+    const mins = String(d.getMinutes()).padStart(2,'0');
+    return `${day} ${month} · ${hours}:${mins}`;
+  } catch(e) { return dateStr; }
+}
+
+function isPredictionOpen(dateStr) {
+  if (!dateStr) return true;
+  const matchTime = new Date(dateStr).getTime();
+  const now = Date.now();
+  // Se cierra 30 minutos antes del partido
+  return now < (matchTime - 30 * 60 * 1000);
+}
+
+function renderMatchCard(match) {
+  const result = State.results.find(r => r.match_id === match.id);
+  const liveScore = State.liveResults[match.id];
+  const pred = State.myPreds[match.id];
+  const settings = State.settings;
+
+  const hasResult = result && result.home_score !== null;
+  const predictionOpen = !hasResult && isPredictionOpen(match.date);
+  const closedLabel = !predictionOpen && !hasResult ? `<div style="font-size:10px;color:#f87171;text-align:center;margin-top:4px">🔒 Predicciones cerradas</div>` : '';
+  const isLive = !hasResult && !!liveScore;
+
+  const { pts, status } = hasResult ? calcPoints(pred, result, settings) : { pts: 0, status: 'pending' };
+
+  // Score display
+  let scoreHtml = '';
+  if (hasResult) {
+    scoreHtml = `<div class="result-score">${result.home_score} - ${result.away_score}</div>`;
+  } else if (isLive) {
+    scoreHtml = `<div class="live-score">${liveScore.home} - ${liveScore.away}</div>`;
+  } else {
+    scoreHtml = `<div class="vs-label">VS</div>`;
+  }
+
+  // Prediction zone
+  let predZone = '';
+  if (settings.type === 'exact') {
+    const ph = pred && typeof pred === 'object' ? pred.h : '';
+    const pa = pred && typeof pred === 'object' ? pred.a : '';
+    let ptsBadge = '';
+    if (hasResult) {
+      if (status === 'exact')   ptsBadge = `<div class="pts-row pts-exact">+${pts} pts — ¡EXACTO! 🎯</div>`;
+      else if (status === 'partial') ptsBadge = `<div class="pts-row pts-partial">+${pts} pts — signo correcto ✓</div>`;
+      else if (status === 'wrong')   ptsBadge = `<div class="pts-row pts-wrong">0 pts ✗</div>`;
+      else ptsBadge = `<div class="pts-row pts-none">Sin predicción</div>`;
+    }
+    predZone = `
+    <div class="pred-zone">
+      <div class="pred-header">
+        <span class="pred-label">Tu predicción</span>
+        ${hasResult ? `<span class="pred-result-label">RESULTADO: ${result.home_score} - ${result.away_score}</span>` : ''}
+        ${isLive ? `<span class="chip chip-blue" style="font-size:9px">EN VIVO ${liveScore.home}-${liveScore.away}</span>` : ''}
+      </div>
+      <div class="pred-exact">
+        <input class="score-inp" type="number" min="0" max="99" value="${ph}" placeholder="-"
+               data-mid="${match.id}" data-side="h" ${!predictionOpen ? 'disabled' : ''}>
+        <span class="score-dash">-</span>
+        <input class="score-inp" type="number" min="0" max="99" value="${pa}" placeholder="-"
+               data-mid="${match.id}" data-side="a" ${!predictionOpen ? 'disabled' : ''}>
+      </div>
+      ${ptsBadge}
+    ${closedLabel}
+    </div>`;
+  } else {
+    const rs = hasResult ? sign(result.home_score, result.away_score) : null;
+    const btns = ['1','x','2'].map(v => {
+      let cls = 'px-btn';
+      if (hasResult) {
+        if (v === rs && v === pred) cls += ` ok-${v}`;
+        else if (v === pred && v !== rs) cls += ' wrong';
+        else if (v === rs) cls += ` ok-${v}`;
+      } else {
+        if (v === pred) cls += ` sel-${v}`;
+      }
+      return `<button class="${cls}" data-mid="${match.id}" data-val="${v}" ${!predictionOpen ? 'disabled' : ''}>${v.toUpperCase()}</button>`;
+    }).join('');
+    let ptsBadge = '';
+    if (hasResult) {
+      if (status === 'correct') ptsBadge = `<div class="pts-row pts-exact">+${pts} pts ✓</div>`;
+      else if (status === 'wrong') ptsBadge = `<div class="pts-row pts-wrong">0 pts ✗</div>`;
+      else ptsBadge = `<div class="pts-row pts-none">Sin predicción</div>`;
+    }
+    predZone = `
+    <div class="pred-zone">
+      <div class="pred-header">
+        <span class="pred-label">Tu predicción</span>
+        ${hasResult ? `<span class="pred-result-label">RESULTADO: ${result.home_score} - ${result.away_score}</span>` : ''}
+        ${isLive ? `<span class="chip chip-blue" style="font-size:9px">EN VIVO ${liveScore.home}-${liveScore.away}</span>` : ''}
+      </div>
+      <div class="pred-1x2">${btns}</div>
+      ${ptsBadge}
+    </div>`;
+  }
+
+  return `
+  <div class="match-card ${isLive ? 'live-card' : ''}">
+    <div class="match-meta">
+      <span class="match-date">📅 ${formatDate(match.date)}</span>
+      ${isLive
+        ? `<span class="live-dot">EN VIVO</span>`
+        : `<span class="match-venue">📍 ${match.venue}</span>`}
+    </div>
+    <div class="teams-row">
+      <div class="team-side"><span class="team-flag">${match.homeFlag}</span><span class="team-name">${match.home}</span></div>
+      ${scoreHtml}
+      <div class="team-side away"><span class="team-flag">${match.awayFlag}</span><span class="team-name">${match.away}</span></div>
+    </div>
+    ${predZone}
+  </div>`;
+}
+
+// ---- Leaderboard ----
+async function renderLeaderboard() {
+  // Load all predictions for ranking
+  const allPreds = await DB.loadAllPreds(State.session.roomId);
+  const medals = ['🥇','🥈','🥉'];
+  const posClass = ['gold','silver','bronze'];
+
+  const rows = State.players
+    .map(p => ({ ...p, pts: totalPoints(allPreds[p.id] || {}, State.results, State.settings) }))
+    .sort((a, b) => b.pts - a.pts);
+
+  const liveCount = Object.keys(State.liveResults).length;
+
+  return `
+  <div class="lb-section">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="section-title" style="margin-bottom:0">TABLA DE POSICIONES</div>
+      <div class="rt-badge"><div class="rt-dot"></div>En tiempo real</div>
+    </div>
+    ${liveCount > 0 ? `<div class="live-indicator"><div class="rt-dot"></div>${liveCount} partido(s) en curso — los puntajes se actualizan al finalizar</div>` : ''}
+    ${rows.map((p, i) => `
+    <div class="lb-row ${p.id === State.session.playerId ? 'me' : ''}">
+      <div class="lb-pos ${posClass[i] || 'other'}">${medals[i] || i + 1}</div>
+      <div class="lb-info">
+        <div class="lb-name">${p.name}${p.id === State.session.playerId ? ' <span style="color:var(--green2);font-size:10px">(vos)</span>' : ''}</div>
+        <div class="lb-sub">${Object.keys(allPreds[p.id] || {}).length} predicciones cargadas</div>
+      </div>
+      <div class="lb-pts">${p.pts}<span> pts</span></div>
+    </div>`).join('')}
+
+    <!-- Ad in leaderboard -->
+    <div class="ad-unit" style="margin:12px 0">
+      <ins class="adsbygoogle" style="display:block;min-height:60px;"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="BBBBBBBBBB"
+           data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+  </div>`;
+}
+
+// ---- Admin panel ----
+function renderAdmin() {
+  const { fetching, fetchLog, fetchedResults } = State;
+
+  const previewHtml = fetchedResults && fetchedResults.length > 0 ? `
+  <div class="results-preview">
+    <div class="rp-header">
+      <span>📊 ${fetchedResults.length} resultado(s) listos para aplicar</span>
+      <button class="apply-all" id="apply-all">APLICAR TODOS</button>
+    </div>
+    ${fetchedResults.map(r => {
+      const match = MATCHES.find(m => m.id === r.id);
+      if (!match) return '';
+      return `<div class="rp-row">
+        <span class="rp-match">${match.homeFlag} ${match.home} vs ${match.away} ${match.awayFlag}</span>
+        <span class="rp-score">${r.home} - ${r.away}</span>
+        <span class="rp-ok">✓</span>
+      </div>`;
+    }).join('')}
+  </div>` :
+  fetchedResults && fetchedResults.length === 0 ?
+    `<div class="info-box" style="color:var(--text3)">No hay partidos finalizados aún. El torneo empieza el 11 de junio de 2026.</div>` : '';
+
+  const manualCards = MATCHES.map(m => {
+    const res = State.results.find(r => r.match_id === m.id);
+    const hasRes = res && res.home_score !== null;
+    return `
+    <div class="admin-match-card ${hasRes ? 'done' : ''}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div class="admin-match-teams">${m.homeFlag} ${m.home} vs ${m.awayFlag} ${m.away}</div>
+        <div class="admin-match-date">${m.date} · ${m.venue}</div>
+      </div>
+      <div class="admin-inputs">
+        <input class="admin-score-inp" type="number" min="0" max="99" id="rh-${m.id}" value="${hasRes ? res.home_score : ''}" placeholder="-">
+        <span class="score-dash" style="font-size:16px">-</span>
+        <input class="admin-score-inp" type="number" min="0" max="99" id="ra-${m.id}" value="${hasRes ? res.away_score : ''}" placeholder="-">
+        <button class="save-btn" data-save="${m.id}">Guardar</button>
+        ${hasRes ? `<span class="saved-badge">✓ guardado${res.api_source === 'api-football' ? ' · vía API' : ''}</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+  <div class="admin-section">
+    <div class="section-title">RESULTADOS AUTOMÁTICOS — API-FOOTBALL</div>
+    <div class="info-box">
+      <strong>¿Cómo funciona?</strong> El botón llama a tu función en Vercel
+      (<code>/api/results</code>) que consulta <strong>API-Football</strong> con
+      <code>league=1&season=2026</code>. Devuelve todos los partidos finalizados
+      y los que están en curso.<br><br>
+      Requiere: <strong>API_FOOTBALL_KEY</strong> en las variables de entorno de Vercel.
+      Consola: <a href="https://dashboard.api-football.com" target="_blank">dashboard.api-football.com</a>
+      → <em>gratis hasta 100 req/día</em>, suficiente para actualizar cada 15 min durante el torneo.
+    </div>
+
+    <button class="auto-btn" id="auto-fetch" ${fetching ? 'disabled' : ''}>
+      ${fetching
+        ? `<div class="spinner"></div> CONSULTANDO API-FOOTBALL...`
+        : `⚡ SINCRONIZAR RESULTADOS`}
+    </button>
+
+    ${previewHtml}
+    ${fetchLog ? `<div class="fetch-log">${fetchLog}</div>` : ''}
+
+    <div class="section-title" style="margin-top:8px">CARGA MANUAL</div>
+    <div class="info-box">Podés cargar cualquier resultado manualmente, con o sin la API automática.</div>
+    ${manualCards}
+  </div>`;
+}
+
+// ============================================================
+// EVENT BINDING
+// ============================================================
+function bindEvents() {
+  const on = (id, fn) => { const e = document.getElementById(id); if (e) e.onclick = fn; };
+
+  // Landing
+  on('btn-create', () => { State.screen = 'create'; State.createStep = 1; State.createData = {}; State.createError = ''; render(); });
+  on('btn-join', () => { State.screen = 'join'; State.joinError = ''; render(); });
+
+  // Create
+  on('cr-back', () => { if (State.createStep > 1) { State.createStep--; render(); } else { State.screen = 'landing'; render(); } });
+
+  on('cr-next1', () => {
+    const name = (document.getElementById('cr-name') || {}).value?.trim();
+    const adminName = (document.getElementById('cr-admin') || {}).value?.trim();
+    if (!name || !adminName) { State.createError = 'Completá todos los campos.'; render(); return; }
+    State.createData = { ...State.createData, name, adminName };
+    State.createError = '';
+    State.createStep = 2;
+    render();
+  });
+
+  on('type-1x2', () => { State.createData = { ...State.createData, type: 'ox' }; render(); });
+  on('type-exact', () => { State.createData = { ...State.createData, type: 'ex' }; render(); });
+
+  on('cr-next2', async () => {
+    const d = State.createData;
+    const pW = parseInt((document.getElementById('cr-pwin') || {}).value) || 3;
+    const pD = parseInt((document.getElementById('cr-pdraw') || {}).value) || 1;
+    const pE = parseInt((document.getElementById('cr-pexact') || {}).value) || 5;
+    const pP = parseInt((document.getElementById('cr-ppartial') || {}).value) || 2;
+    const code = Array.from({length:6}, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*33)]).join('');
+    const settings = { type: d.type === 'ex' ? 'exact' : 'oneXtwo', pW, pD, pE, pP };
+
+    try {
+      const { room, player } = await DB.createRoom(code, d.name, d.adminName, settings);
+      State.createData = { ...d, code, roomId: room.id, playerId: player.id, settings };
+      State.createStep = 3;
+      render();
+    } catch (err) {
+      State.createError = err.message;
+      render();
+    }
+  });
+
+  on('cr-enter', async () => {
+    const d = State.createData;
+    const room = await DB.loadRoom(d.roomId);
+    const player = { id: d.playerId, name: d.adminName, is_admin: true };
+    await goToGame(room, player);
+  });
+
+  // Join
+  on('j-back', () => { State.screen = 'landing'; render(); });
+
+  on('j-enter', async () => {
+    const code = (document.getElementById('j-code') || {}).value?.trim().toUpperCase();
+    const name = (document.getElementById('j-name') || {}).value?.trim();
+    if (!code || !name) { State.joinError = 'Completá el código y tu nombre.'; render(); return; }
+    State.joinCode = code;
+    State.joinName = name;
+    try {
+      const { room, player } = await DB.joinRoom(code, name);
+      await goToGame(room, player);
+    } catch (err) {
+      State.joinError = err.message;
+      render();
+    }
+  });
+
+  // Game tabs
+  on('tab-fixture', () => { State.tab = 'fixture'; render(); });
+  on('tab-scores', async () => { State.tab = 'scores'; State.screen = 'game'; const html = await renderLeaderboard(); document.querySelector('.tabbar').insertAdjacentHTML('afterend', html); });
+  on('tab-admin', () => { State.tab = 'admin'; render(); });
+
+  on('btn-leave', () => {
+    if (realtimeChannel) supabase.removeChannel(realtimeChannel);
+    clearSession();
+    State.screen = 'landing';
+    State.session = null;
+    State.room = null;
+    render();
+  });
+
+  on('copy-code', () => {
+    const code = State.session?.roomCode;
+    if (code) navigator.clipboard.writeText(code).then(() => {
+      const e = document.getElementById('copy-code');
+      if (e) { e.innerHTML = '<span style="font-family:Bebas Neue;font-size:15px">¡COPIADO!</span>'; setTimeout(() => render(), 1400); }
+    }).catch(() => {});
+  });
+
+  // Group tabs
+  document.querySelectorAll('[data-grp]').forEach(btn => {
+    btn.onclick = () => { State.group = btn.dataset.grp; render(); };
+  });
+
+  // 1x2 prediction buttons
+  document.querySelectorAll('.px-btn:not(:disabled)').forEach(btn => {
+    btn.onclick = async () => {
+      const mid = btn.dataset.mid;
+      const val = btn.dataset.val;
+      State.myPreds[mid] = val;
+      render();
+      await DB.savePrediction(State.session.roomId, State.session.playerId, mid, val);
+    };
+  });
+
+  // Exact score inputs
+  document.querySelectorAll('.score-inp:not(:disabled)').forEach(inp => {
+    inp.onchange = async () => {
+      const mid = inp.dataset.mid;
+      const all = [...document.querySelectorAll(`.score-inp[data-mid="${mid}"]`)];
+      const hEl = all.find(e => e.dataset.side === 'h');
+      const aEl = all.find(e => e.dataset.side === 'a');
+      if (hEl && aEl && hEl.value !== '' && aEl.value !== '') {
+        const val = { h: parseInt(hEl.value), a: parseInt(aEl.value) };
+        State.myPreds[mid] = val;
+        render();
+        await DB.savePrediction(State.session.roomId, State.session.playerId, mid, val);
+      }
+    };
+  });
+
+  // Manual result save
+  document.querySelectorAll('[data-save]').forEach(btn => {
+    btn.onclick = async () => {
+      const mid = btn.dataset.save;
+      const hEl = document.getElementById(`rh-${mid}`);
+      const aEl = document.getElementById(`ra-${mid}`);
+      if (!hEl || !aEl || hEl.value === '' || aEl.value === '') return;
+      await DB.saveResult(State.session.roomId, mid, parseInt(hEl.value), parseInt(aEl.value), 'manual');
+      State.results = await DB.loadResults(State.session.roomId);
+      render();
+    };
+  });
+
+  // Auto-fetch results
+  on('auto-fetch', () => fetchAndSyncResults());
+  on('apply-all', () => applyFetchedResults());
+}
+
+// ============================================================
+// INIT
+// ============================================================
+async function init() {
+  State.screen = 'loading';
+  render();
+
+  const sess = loadSession();
+  if (sess) {
+    try {
+      const room = await DB.loadRoom(sess.roomId);
+      if (room) {
+        const { data: player } = await supabase.from('players').select().eq('id', sess.playerId).single();
+        if (player) {
+          await goToGame(room, player);
+          return;
+        }
+      }
+    } catch (e) {
+      clearSession();
+    }
+  }
+
+  State.screen = 'landing';
+  render();
+}
+
+init();
+</script>
+</body>
+</html>
