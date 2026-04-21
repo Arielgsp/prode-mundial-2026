@@ -699,6 +699,7 @@ body {
   border-top: 1px solid var(--border2);
 }
 </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -726,12 +727,12 @@ body {
 const CONFIG = {
   // PASO 1: Crear cuenta en supabase.com → New Project → Settings → API
   // Copiar Project URL y anon public key acá:
-  SUPABASE_URL:      "https://https://jocwxhyfvcrsjkdzsfoj.supabase.co/rest/v1/",
+  SUPABASE_URL:      "https://jocwxhyfvcrsjkdzsfoj.supabase.co",
   SUPABASE_ANON_KEY: "sb_publishable_5nLEZAQJfrjHNk4URHRc6g_zB1pszHX",
 
   // PASO 2: Deployar en Vercel y copiar la URL acá (sin slash final)
   // Ejemplo: "https://prode-mundial.vercel.app"
-  API_BASE_URL: "https://prode-mundial-2026-seven.vercel.app/",
+  API_BASE_URL: "https://prode-mundial-2026-seven.vercel.app",
 };
 
 // ============================================================
@@ -1135,13 +1136,6 @@ function renderLanding() {
     </div>
   </div>
 
-  <!-- Ad unit — top of page -->
-  <div class="ad-unit" style="margin-top:12px">
-    <ins class="adsbygoogle" style="display:block;" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-         data-ad-slot="ZZZZZZZZZZ" data-ad-format="auto" data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-  </div>
-
   <div class="page" style="padding-top:10px">
     <div class="feature-grid">
       <div class="feature-card">
@@ -1336,15 +1330,6 @@ function renderFixture() {
         ? `<span class="chip chip-green">✓ ${doneInGroup}/6</span>`
         : `<span class="chip chip-amber">Pendiente</span>`}
   </div>
-
-  <!-- Inline ad between group header and matches -->
-  <div class="ad-unit">
-    <ins class="adsbygoogle" style="display:block;min-height:50px;"
-         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="AAAAAAAAAA"
-         data-ad-format="auto" data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-  </div>
-
   <div class="section">${matchCards}</div>`;
 }
 
@@ -1498,14 +1483,6 @@ async function renderLeaderboard() {
       </div>
       <div class="lb-pts">${p.pts}<span> pts</span></div>
     </div>`).join('')}
-
-    <!-- Ad in leaderboard -->
-    <div class="ad-unit" style="margin:12px 0">
-      <ins class="adsbygoogle" style="display:block;min-height:60px;"
-           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="BBBBBBBBBB"
-           data-ad-format="auto" data-full-width-responsive="true"></ins>
-      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
   </div>`;
 }
 
